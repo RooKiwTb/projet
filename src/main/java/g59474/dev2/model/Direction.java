@@ -1,5 +1,8 @@
 package g59474.dev2.model;
-
+/**
+ *
+ * @author g59474
+ * */
 public enum Direction {
     UP(1,0),
     DOWN(-1,0),

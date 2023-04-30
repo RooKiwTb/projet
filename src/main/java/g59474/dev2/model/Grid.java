@@ -1,5 +1,8 @@
 package g59474.dev2.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author g59474
@@ -27,7 +30,7 @@ public class Grid {
      * */
     public void firstAdd(Direction d, Tile... line){
         if(!isEmpty){
-            throw new QwirkleException();
+            throw new QwirkleException("The board must be empty at the beginning");
         }
         for (Tile t : line){
             tiles[45+ d.getDeltaRow()][45+ d.getDeltaColumn()]= t;
@@ -38,26 +41,7 @@ public class Grid {
      * */
     public void add(int row, int col, Tile tile){
 
-        for(Direction dir : Direction.values()){
-            if(tiles[row + dir.getDeltaRow()][col + dir.getDeltaColumn()] == null){
-                throw new QwirkleException();
-            }
-            else if (tiles[row+ dir.getDeltaRow()][col+ dir.getDeltaColumn()].color() != tile.color()
-                        && tiles[row+ dir.getDeltaRow()][col+ dir.getDeltaColumn()].shape() != tile.shape()){
-                throw new QwirkleException();
-            }
-            else if (tiles[row+ dir.getDeltaRow()][col+ dir.getDeltaColumn()].color() == tile.color()
-                        || tiles[row+ dir.getDeltaRow()][col+ dir.getDeltaColumn()].shape() == tile.shape()) {
-                int i = 1;
-                while (tiles[row +(dir.getDeltaRow()*i)][col+ dir.getDeltaColumn()*i] != null) {
-                    if (tiles[row][col].color() == tile.color() && tiles[row][col].shape() == tile.shape()) {
-                        throw new QwirkleException();
-                    }
-                    i++;
-                }
-            }
-        }
-
+        checkLine(row, col, tile);
         tiles [row][col]= tile;
     }
     /**
@@ -65,14 +49,16 @@ public class Grid {
      * */
     public void add(int row, int col, Direction d, Tile...line){
         //if (Condition)
-        for(Direction dir : Direction.values()) {
-            if (tiles[row + dir.getDeltaRow()][col + dir.getDeltaColumn()] == null) {
-                throw new QwirkleException();
-            }
-        }
-
+        List<Tile> ti= new ArrayList<>();
         for (Tile t :line) {
+            ti.add(t);
+        }
+        for (int i = 0; i <ti.size()-1; i++) {
+            for (int j = i + 1; j < ti.size(); j++) {
+                if (!checkColor(ti.get(i), ti.get(j)) && !checkShape(ti.get(i),ti.get(j))) {
 
+                }
+            }
         }
         for (Tile t : line){
             tiles[row+d.getDeltaRow()][col+d.getDeltaColumn()]=t;
@@ -115,15 +101,16 @@ public class Grid {
         return tile.color() == tuile.color() && tile.shape()!=tuile.shape();
 
     }
-    private boolean checkShape(Tile tile, Tile tuile){
-        return tile.shape() == tuile.shape() && tile.color()!=tuile.color();
+    private boolean checkShape(Tile tile1, Tile tile2){
+        return tile1.shape() == tile2.shape() && tile1.color()!=tile2.color();
 
     }
-    private void checkLine (Direction d, int row, int col, Tile tile){
+    private void checkLine ( int row, int col, Tile tile){
+
         if(!checkEmpty(row, col)){
             throw new QwirkleException("There is no tile near the given position");
         }
-
+        // ajouter un hashset list
         for( Direction dir : Direction.values()){
             int nextRow = row + dir.getDeltaRow();
             int nextCol = col+ dir.getDeltaColumn();

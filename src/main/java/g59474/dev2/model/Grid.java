@@ -37,55 +37,27 @@ public class Grid {
      * This method is used when a single given tile is added to the board
      * */
     public void add(int row, int col, Tile tile){
-        if(tiles[row][col-1]==null && tiles[row][col+1]==null && tiles[row-1][col]==null && tiles[row+1][col]==null){
-            throw new QwirkleException();
-        }
-        else if (tiles[row][col-1].color() != tile.color() && tiles[row][col-1].shape() != tile.shape()
-                    && tiles[row][col+1].color() != tile.color() && tiles[row][col+1].shape() != tile.shape()
-                    && tiles[row-1][col].color() != tile.color() && tiles[row-1][col].shape() != tile.shape()
-                    && tiles[row+1][col].color() != tile.color() && tiles[row+1][col].shape() != tile.shape()){
-            throw new QwirkleException();
-        }
-             // \\
-            // | \\
-           //  °  \\
-        // OPTIMISER
 
-        /*for (Direction dir: Direction.values() ) {
+        for(Direction dir : Direction.values()){
+            if(tiles[row + dir.getDeltaRow()][col + dir.getDeltaColumn()] == null){
+                throw new QwirkleException();
+            }
+            else if (tiles[row+ dir.getDeltaRow()][col+ dir.getDeltaColumn()].color() != tile.color()
+                        && tiles[row+ dir.getDeltaRow()][col+ dir.getDeltaColumn()].shape() != tile.shape()){
+                throw new QwirkleException();
+            }
+            else if (tiles[row+ dir.getDeltaRow()][col+ dir.getDeltaColumn()].color() == tile.color()
+                        || tiles[row+ dir.getDeltaRow()][col+ dir.getDeltaColumn()].shape() == tile.shape()) {
+                int i = 1;
+                while (tiles[row +(dir.getDeltaRow()*i)][col+ dir.getDeltaColumn()*i] != null) {
+                    if (tiles[row][col].color() == tile.color() && tiles[row][col].shape() == tile.shape()) {
+                        throw new QwirkleException();
+                    }
+                    i++;
+                }
+            }
+        }
 
-        }*/
-        else if (tiles[row][col-1].color() == tile.color() || tiles[row][col-1].shape() == tile.shape()
-                    || tiles[row][col+1].color() == tile.color() || tiles[row][col+1].shape() == tile.shape()) {
-            int i = 0;
-            while (tiles[row][col - 1 - i] != null) {
-                if (tiles[row][col - 1 - i].color() == tile.color() && tiles[row][col - 1 - i].shape() == tile.shape()) {
-                    throw new QwirkleException();
-                }
-                i++;
-            }
-            while (tiles[row][col + 1 + i] != null) {
-                if (tiles[row][col + 1 + i].color() == tile.color() && tiles[row][col + 1 + i].shape() == tile.shape()) {
-                    throw new QwirkleException();
-                }
-                i++;
-            }
-        }
-        else if (tiles[row-1][col].color() == tile.color() || tiles[row-1][col].shape() == tile.shape()
-                    || tiles[row+1][col].color() == tile.color() || tiles[row+1][col].shape() == tile.shape()){
-            int i = 0;
-            while(tiles[row-1-i][col] != null){
-                if(tiles[row-1-i][col].color() == tile.color() && tiles[row-1-i][col].shape() == tile.shape()){
-                    throw new QwirkleException();
-                }
-                i++;
-            }
-            while(tiles[row+1+i][col] != null){
-                if(tiles[row+1+i][col].color() == tile.color() && tiles[row+1+i][col].shape() == tile.shape()){
-                    throw new QwirkleException();
-                }
-                i++;
-            }
-        }
         tiles [row][col]= tile;
     }
     /**
@@ -93,9 +65,12 @@ public class Grid {
      * */
     public void add(int row, int col, Direction d, Tile...line){
         //if (Condition)
-        if(tiles[row][col-1]==null && tiles[row][col+1]==null && tiles[row-1][col]==null && tiles[row+1][col]==null){
-            throw new QwirkleException();
+        for(Direction dir : Direction.values()) {
+            if (tiles[row + dir.getDeltaRow()][col + dir.getDeltaColumn()] == null) {
+                throw new QwirkleException();
+            }
         }
+
         for (Tile t :line) {
 
         }
@@ -128,6 +103,50 @@ public class Grid {
         }
         return isEmpty;
     }
+    private boolean checkEmpty (int row, int col){
+        for (Direction dir: Direction.values()) {
+           if(tiles[row + dir.getDeltaRow()][col + dir.getDeltaColumn()] != null){
+               return true;
+           }
+        }
+        return  false;
+    }
+    private boolean checkColor(Tile tile, Tile tuile){
+        return tile.color() == tuile.color() && tile.shape()!=tuile.shape();
+
+    }
+    private boolean checkShape(Tile tile, Tile tuile){
+        return tile.shape() == tuile.shape() && tile.color()!=tuile.color();
+
+    }
+    private void checkLine (Direction d, int row, int col, Tile tile){
+        if(!checkEmpty(row, col)){
+            throw new QwirkleException("There is no tile near the given position");
+        }
+
+        for( Direction dir : Direction.values()){
+            int nextRow = row + dir.getDeltaRow();
+            int nextCol = col+ dir.getDeltaColumn();
+
+            while (validPostion(nextRow,nextCol)) {
+                if(tiles[nextRow][nextCol]==null){break;}
+                else if (!checkColor(tiles[nextRow][nextCol], tile) && !checkShape(tiles[nextRow][nextCol], tile)) {
+                    throw new QwirkleException("The near tile does not match with the given tile");
+                }
+                nextRow = nextRow + dir.getDeltaRow();
+                nextCol = nextCol + dir.getDeltaColumn();
+            }
+        }
+
+
+        }
+
+    }
+    private boolean validPostion(int row, int col){
+      return row >= 0 && row <= 90 && col >=0 && col<=90 ;
+
+    }
+
 }
 
 

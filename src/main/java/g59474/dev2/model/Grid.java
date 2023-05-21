@@ -32,8 +32,19 @@ public class Grid {
         if(!isEmpty){
             throw new QwirkleException("The board must be empty at the beginning");
         }
+        List<Tile> ti= new ArrayList<>();
+        for (Tile t :line) {
+            ti.add(t);
+        }
+        for (int i = 0; i <ti.size()-1; i++) {
+            for (int j = i + 1; j < ti.size(); j++) {
+                if (!checkColor(ti.get(i), ti.get(j)) && !checkShape(ti.get(i),ti.get(j))) {
+                    throw new QwirkleException("The tiles don't match");
+                }
+            }
+        }
         for (Tile t : line){
-            tiles[45+ d.getDeltaRow()][45+ d.getDeltaColumn()]= t;
+            tiles[(tiles.length/2)+ d.getDeltaRow()][(tiles[0].length/2)+ d.getDeltaColumn()]= t;
         }
     }
     /**
@@ -56,11 +67,12 @@ public class Grid {
         for (int i = 0; i <ti.size()-1; i++) {
             for (int j = i + 1; j < ti.size(); j++) {
                 if (!checkColor(ti.get(i), ti.get(j)) && !checkShape(ti.get(i),ti.get(j))) {
-
+                    throw new QwirkleException("The tiles don't match");
                 }
             }
         }
         for (Tile t : line){
+            checkLine(row, col, t);
             tiles[row+d.getDeltaRow()][col+d.getDeltaColumn()]=t;
         }
     }
@@ -69,8 +81,8 @@ public class Grid {
      * but they aren't next to each other
      * */
     public void add(TileAtPosition... line){
-        // if (Conditon)
         for (TileAtPosition t :line) {
+            checkLine(t.getRow(), t.getCol(), t.getTile());
             tiles[t.row()][t.col()]= t.tile();
         }
     }
@@ -128,7 +140,6 @@ public class Grid {
 
         }
 
-    }
     private boolean validPostion(int row, int col){
       return row >= 0 && row <= 90 && col >=0 && col<=90 ;
 

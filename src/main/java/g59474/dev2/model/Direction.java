@@ -22,6 +22,19 @@ public enum Direction {
     public int getDeltaColumn() {
         return this.deltaColumn;
     }
+    public static Direction getDirectionFromLetter(String letter) {
+        switch (letter) {
+            case "l":
+                return Direction.LEFT;
+            case "r":
+                return Direction.RIGHT;
+            case "u":
+                return Direction.UP;
+            case "d":
+                return Direction.DOWN;
+        }
+        return null;
+    }
     public Direction opposite(){
         Direction res = LEFT;
         if(this == Direction.LEFT){

@@ -2,7 +2,7 @@ package g59474.dev2.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.Collections;
 
 /**
  *
@@ -11,17 +11,27 @@ import java.util.Random;
 public class Bag {
 
     private List<Tile> tiles;
+    public static Bag bagInstance;
     /**
      * constructor of bag
      * creates a list with all the possible tiles
     * */
     private Bag() {
+        bagInstance = this;
+        boolean isTestBag = false;
+
         tiles = new ArrayList<>();
-        //tiles.add(new Tile(Color.GREEN, Shape.STAR ));
-        for (int i = 0; i >= 3; i++ ) {
-            for (Color c : Color.values()) {
-                for (Shape s : Shape.values()) {
-                    tiles.add(new Tile(c, s));
+
+        if (isTestBag) {
+            for (int i = 0; i < 18; i++){
+                tiles.add(new Tile(Color.RED, Shape.DIAMOND));
+            }
+        } else{
+            for (int i = 0; i < 3; i++ ) {
+                for (Color c : Color.values()) {
+                    for (Shape s : Shape.values()) {
+                        tiles.add(new Tile(c, s));
+                    }
                 }
             }
         }
@@ -32,8 +42,10 @@ public class Bag {
      * because bag is private
      * */
     public static Bag getInstance(){
-        Bag bag = new Bag();
-      return bag;
+        if (bagInstance == null){
+            new Bag();
+        }
+        return bagInstance;
     }
     /**
      * returns random tiles
@@ -43,28 +55,29 @@ public class Bag {
      *
      * */
     public Tile[] getRandomTiles(int n){
-        Tile[] result = new Tile[]{};
-        if (tiles.isEmpty()){
-            result = null;
+        if (tiles.isEmpty()) {
+            return null;
         }
-        else if(tiles.size() < n){
-            for(int i = 0; i < tiles.size(); i++){
-                result[i] = tiles.get(i);
-            }
+        Collections.shuffle(tiles);
+
+        int arraySize = n;
+        if (tiles.size() < n) {
+            arraySize = tiles.size();
         }
-        int i = 0;
-        while( i >= n-1){
-            i++;
-            int random = (int) (Math.random() * tiles.size() + 1);
-            result[i] = tiles.get(random);
+
+        Tile[] result = new Tile[arraySize];
+        for (int i = 0; i < arraySize; i++){
+            result[i] = tiles.remove(0);
         }
+        System.out.println("LEFT IN BAG:");
+        System.out.println(tiles.size());
         return result;
     }
     /**
-    * returns the size of the bag
-    * is needed for other classes
-    * because bag is private
-    * */
+     * returns the size of the bag
+     * is needed for other classes
+     * because bag is private
+     * */
     public int size(){
         return tiles.size();
     }

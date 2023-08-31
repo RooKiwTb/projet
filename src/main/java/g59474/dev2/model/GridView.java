@@ -1,13 +1,17 @@
 package g59474.dev2.model;
 
 public class GridView {
-    private GridView(Grid gird) {
+
+    private Grid grid;
+    GridView(Grid grid) {
+        this.grid = grid;
     }
-    private Tile get(int row, int col){
-        return null;
+
+    public Tile get(int row, int col){
+        return grid.get(row, col);
     }
-    private boolean isEmpty(){
-        return false;
+    public boolean isEmpty(){
+        return grid.isEmpty();
     }
 
 
